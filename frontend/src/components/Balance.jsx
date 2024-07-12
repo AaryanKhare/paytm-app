@@ -1,11 +1,37 @@
+import { useEffect, useState } from "react"
+import axios from 'axios';
 
-export const Balance = ({ value }) => {
-    return <div className="flex">
+export const Balance = () => {
+const [balance, setBalance] = useState()
+
+useEffect(()=>{
+    const fetchBalance = async () => {
+        try {
+            const response = await axios.get("http://localhost:3000/api/v1/account/balance", {
+                headers:{
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                    }
+        });
+        setBalance(response.data.balance.toFixed(2));
+
+        }catch(error){
+            console.log("error")
+        }
+    }
+    fetchBalance();  
+},[]);
+
+    return (<div className="flex justify-between">
         <div className="font-bold text-lg">
-            Your balance
+            {balance != null && 
+            <div>
+                Available balance: ₹{balance}
+            </div>
+            }
         </div>
-        <div className="font-semibold ml-4 text-lg">
-            Rs {value}
-        </div>
+        
     </div>
-}
+    )
+};
+
+export default Balance;
